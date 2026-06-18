@@ -17,16 +17,11 @@ export const Form = ({ editTask, setEditTask }) => {
 
   const createMutation = useMutation({
     mutationFn: createTask,
-
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
       setTitle("");
       setDescription("");
     },
-
     onError: (error) => {
       console.error(error);
     },
@@ -34,47 +29,35 @@ export const Form = ({ editTask, setEditTask }) => {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, task }) => updateTask(id, task),
-
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
       setTitle("");
       setDescription("");
       setEditTask(null);
     },
-
     onError: (error) => {
       console.error(error);
     },
   });
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    const task = {
-      title,
-      description,
-    };
+  const handleFormSubmit = () => {
+    const task = { title, description };
 
     if (editTask) {
-      updateMutation.mutate({
-        id: editTask.id,
-        task,
-      });
+      updateMutation.mutate({ id: editTask.id, task });
     } else {
       createMutation.mutate(task);
     }
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
+    <div className="flex items-center justify-center gap-4 my-8 text-white">
       <input
         type="text"
         placeholder="Enter Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        className="border border-black rounded-md px-3 py-2 w-48 text-white"
       />
 
       <input
@@ -82,15 +65,16 @@ export const Form = ({ editTask, setEditTask }) => {
         placeholder="Enter Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        className="border border-black rounded-md px-3 py-2 w-64 text-white"
       />
 
       <button
-        type="submit"
+        onClick={handleFormSubmit}
         disabled={createMutation.isPending || updateMutation.isPending}
-        className="px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-600 hover:text-white transition"
+        className="px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-600 hover:text-white transition disabled:opacity-50 text-white"
       >
         {editTask ? "Update" : "Submit"}
       </button>
-    </form>
+    </div>
   );
 };

@@ -5,7 +5,6 @@ import { Form } from "../components/Form";
 
 export const Tasks = () => {
   const queryClient = useQueryClient();
-
   const [editTask, setEditTask] = useState(null);
 
   const { data, isLoading, error } = useQuery({
@@ -18,44 +17,51 @@ export const Tasks = () => {
 
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
-
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks"],
       });
     },
-
-    onError: (error) => {
-      console.error(error);
-    },
   });
 
   if (isLoading) return <h2>Loading...</h2>;
-
   if (error) return <h2>Error loading tasks</h2>;
 
   return (
-    <div>
-      <h2>Task List</h2>
+    <div className="min-h-screen flex flex-col items-center pt-10 bg-slate-950">
+      <h2 className="text-3xl font-bold mb-6 text-white">Task List</h2>
 
       <Form editTask={editTask} setEditTask={setEditTask} />
 
-      {data?.map((task) => (
-        <div key={task.id}>
-          <h3>{task.title}</h3>
-          <p>{task.description}</p>
-
-          <button onClick={() => setEditTask(task)}>Edit</button>
-
-          <button
-            onClick={() => deleteMutation.mutate(task.id)}
-            disabled={deleteMutation.isPending}
-            className="px-4 py-2 border border-red-600 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition"
+      <div className="mt-8 w-full max-w-2xl shadow-lg bg-slate-900">
+        {data?.map((task) => (
+          <div
+            key={task.id}
+            className="border rounded-md p-4 mb-4 flex items-center justify-between"
           >
-            Delete
-          </button>
-        </div>
-      ))}
+            <div>
+              <h3 className="font-bold text-lg text-white">{task.title}</h3>
+              <p className="my-2 text-white">{task.description}</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setEditTask(task)}
+                className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => deleteMutation.mutate(task.id)}
+                className="px-4 py-2 border border-red-600 text-red-600 rounded-md hover:bg-red-600 hover:text-white"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
