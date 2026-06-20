@@ -15,5 +15,7 @@ public interface TaskService {
 
     List<TaskResponseDto> findAllTasks();
 
+    List<TaskResponseDto> findAllCompletedTasks();
+
     TaskResponseDto updateTask(long id, TaskRequestDto taskRequestDto);
 }

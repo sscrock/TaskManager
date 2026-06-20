@@ -34,6 +34,12 @@ public class TaskController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @GetMapping("/allCompleted")
+    public ResponseEntity<List<TaskResponseDto>> findAllCompletedTasks() {
+        List<TaskResponseDto> responseDto = taskService.findAllCompletedTasks();
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> findTaskById(@PathVariable Long id) {
         TaskResponseDto responseDto = taskService.findTaskById(id);

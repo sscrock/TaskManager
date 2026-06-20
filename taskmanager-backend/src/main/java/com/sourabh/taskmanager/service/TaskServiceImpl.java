@@ -53,6 +53,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskResponseDto> findAllCompletedTasks() {
+        List<Task> completedTasks=taskRepository.findByCompleted(true);
+        return completedTasks.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
     public TaskResponseDto updateTask(long id, TaskRequestDto taskRequestDto) {
 
         Task task = taskRepository.findById(id)
