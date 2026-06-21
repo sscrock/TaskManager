@@ -23,3 +23,15 @@ export const getTaskById = (id) => {
 export const getTasks = () => {
   return api.get("tasks");
 };
+
+export const completeTask = (id) => {
+  return api.patch(`/tasks/${id}/complete`);
+};
+
+export const getCompletedTasks = () => {
+  return api.get("/tasks/allCompleted");
+};
+
+export const clearCompletedTasks = () => {
+  return api.delete("/tasks/completed");
+};

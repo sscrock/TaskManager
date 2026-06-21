@@ -5,10 +5,11 @@ import com.sourabh.taskmanager.dto.TaskResponseDto;
 import com.sourabh.taskmanager.entity.Task;
 import com.sourabh.taskmanager.mapper.TaskMapper;
 import com.sourabh.taskmanager.repository.TaskRepository;
-import lombok.AllArgsConstructor;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -37,7 +38,8 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto findTaskById(long id) {
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+                .orElseThrow(() ->
+                        new RuntimeException("Task not found with id: " + id));
 
         return taskMapper.toResponseDto(task);
     }
@@ -54,7 +56,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponseDto> findAllCompletedTasks() {
-        List<Task> completedTasks=taskRepository.findByCompleted(true);
+
+        List<Task> completedTasks = taskRepository.findByCompleted(true);
+
         return completedTasks.stream()
                 .map(taskMapper::toResponseDto)
                 .toList();
@@ -64,7 +68,8 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto updateTask(long id, TaskRequestDto taskRequestDto) {
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+                .orElseThrow(() ->
+                        new RuntimeException("Task not found with id: " + id));
 
         task.setTitle(taskRequestDto.getTitle());
         task.setDescription(taskRequestDto.getDescription());
@@ -72,5 +77,26 @@ public class TaskServiceImpl implements TaskService {
         Task updatedTask = taskRepository.save(task);
 
         return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto completeTask(long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Task not found with id: " + id));
+
+        task.setCompleted(true);
+        task.setCompletedAt(LocalDateTime.now());
+
+        Task updatedTask = taskRepository.save(task);
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    @Transactional
+    public void clearCompletedTasks() {
+        taskRepository.deleteByCompletedTrue();
     }
 }

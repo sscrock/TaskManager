@@ -4,7 +4,6 @@ import com.sourabh.taskmanager.dto.TaskRequestDto;
 import com.sourabh.taskmanager.dto.TaskResponseDto;
 import com.sourabh.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,18 @@ public class TaskController {
             @PathVariable Long id,
             @Valid @RequestBody TaskRequestDto taskRequestDto) {
 
-        TaskResponseDto responseDto = taskService.updateTask(id, taskRequestDto);
+        TaskResponseDto responseDto =
+                taskService.updateTask(id, taskRequestDto);
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<TaskResponseDto> completeTask(
+            @PathVariable Long id) {
+
+        TaskResponseDto responseDto =
+                taskService.completeTask(id);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -59,6 +69,12 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/completed")
+    public ResponseEntity<Void> clearCompletedTasks() {
+        taskService.clearCompletedTasks();
         return ResponseEntity.noContent().build();
     }
 }
